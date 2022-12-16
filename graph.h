@@ -20,6 +20,7 @@ struct Graph* createGraph(); // Create a graph
 struct Node_Graph* createNode(int v, int node_w); // Create a node
 void addNode(struct Graph* graph, int v, int node_w); // Add a node
 void addEdge(struct Graph* graph, int src, int dst, int edge_w); // Add an edge
+void addArrow(struct Graph* graph, int src, int dst, int edge_w); // Add an arrow
 void printNodesWeight(struct Graph* graph); // Print nodes and weights
 void printEdgesWeight(struct Graph* graph); // Print edges and weights
 int has_edge(struct Graph* graph, int v, int u); // Verify if graph has edge (v,u)

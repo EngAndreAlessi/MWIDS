@@ -79,6 +79,26 @@ void addEdge(struct Graph* graph, int src, int dst, int edge_w)
     graph->m++;
 }
 
+// Add an arrow
+void addArrow(struct Graph* graph, int src, int dst, int edge_w)
+{
+    struct Node_Graph* temp = graph->head;
+    struct Node_Graph* temp2 = temp;
+    while(temp->v != src)
+        temp = temp->next;
+    struct Node_Graph* newNode = createNode(dst, temp->node_w);
+    newNode->edge_w = edge_w;
+    if(temp->neighbor == NULL)
+        temp->neighbor = newNode;
+    else
+    {
+        temp2 = temp;
+        while(temp2->neighbor != NULL)
+            temp2 = temp2->neighbor;
+        temp2->neighbor = newNode;
+    }
+}
+
 // Print nodes and weights
 void printNodesWeight(struct Graph* graph)
 {
@@ -405,12 +425,9 @@ struct Graph* copy_graph(struct Graph* graph, int verbose)
         struct Node_Graph* temp2 = temp->neighbor;
         while(temp2)
         {
-            if(!has_edge(new_graph, temp->v, temp2->v))
-            {
-                if(verbose)
-                    printf("Copying edge (%d,%d) with weight %d\n", temp->v, temp2->v, temp2->edge_w);
-                addEdge(new_graph, temp->v, temp2->v, temp2->edge_w);
-            }
+            if(verbose)
+                printf("Copying edge (%d,%d) with weight %d\n", temp->v, temp2->v, temp2->edge_w);
+            addArrow(new_graph, temp->v, temp2->v, temp2->edge_w);
             temp2 = temp2->neighbor;
         }
         temp = temp->next;

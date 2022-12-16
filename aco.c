@@ -13,45 +13,6 @@ void print_array(int n, double arr[])
     printf("\n");
 }
 
-// Create a new S_upd struct
-struct S_upd* create_Supd(int n_ants)
-{
-    struct S_upd* new_supd = (struct S_upd*)malloc(sizeof(struct S_upd));
-    new_supd->n_ants = n_ants;
-    int i;
-    for(i = 0; i < n_ants; i++)
-        new_supd->solutions[i] = create_list_int();
-    return new_supd;
-}
-
-// Insert a list into a S_upd struct
-void insert_Supd(struct S_upd* supd, struct List_int* list_int, int i)
-{
-    supd->solutions[i] = list_int;
-}
-
-// Delete a S_upd struct
-void delete_Supd(struct S_upd* supd)
-{
-    int i;
-    for(i = 0; i < supd->n_ants; i++)
-        delete_list_int(supd->solutions[i]);
-    supd->n_ants = 0;
-    supd = NULL;
-    free(supd);
-}
-
-// Print a S_upd struct
-void print_Supd(struct S_upd* supd)
-{
-    printf("Number of solutions: %d\n", supd->n_ants);
-    int i;
-    for(i = 0; i < supd->n_ants; i++)
-    {
-        printf("Solution %d:\n", i);
-        print_list_int(supd->solutions[i]);
-    }
-}
 
 // Calculate probability of each solution component as of AS
 void calculate_probabilities_as(int n_candidates, double pheromones[], double heuristic_info[], double probs[], double alpha, double beta, struct List_int* removed)
@@ -129,21 +90,26 @@ void evaporate_pheromones(int n_candidates, double pheromones[], double evap_rat
 }
 
 // Deposit pheromones
-void deposit_pheromones(int n_candidates, struct S_upd* supd, double pheromones[], struct Graph* graph, int verbose)
+void deposit_pheromones(int n_candidates, struct List_of_lists* lol, double pheromones[], struct Graph* graph, int n_ants, int verbose)
 {
     double sum = 0.0;
-    int i;
-    for(i = 0; i < supd->n_ants; i++)
-        sum += 1/objective_function(supd->solutions[i], graph, verbose);
+    struct List_int* temp = lol->head;
+    do
+    {
+        sum += 1/objective_function(temp, graph, verbose);
+        temp = temp->next_list;
+    }while(temp);
     int j;
-    for(i = 0; i < supd->n_ants; i++)
+    temp = lol->head;
+    do
     {
         for(j = 0; j < n_candidates; j++)
         {
-            if(vertex_in_list_int(supd->solutions[i], j))
+            if(vertex_in_list_int(temp, j))
                 pheromones[j] += sum;
         }
-    }
+        temp = temp->next_list;
+    }while(temp);
 }
 
 // Initialize pheromones
@@ -209,7 +175,7 @@ struct List_int* construct_solution_probabilistically(int n_candidates, struct G
             printf("Partial solution: ");
             print_list_int(S);
         }
-        struct List_int* cn = get_closed_neighborhood(g, v_, verbose);
+        struct List_int* cn = get_closed_neighborhood(g, v_, 0);
         removed = list_int_union(removed, cn);
         insert_list_int(removed, v_);
         if(verbose)
@@ -236,7 +202,7 @@ struct List_int* construct_solution_probabilistically(int n_candidates, struct G
 
 
 // Simple framework for Ant Colony Optimization
-struct List_int* simple_aco(struct Graph* graph, double alpha, double beta, int n_ants, double initial, double evap_rate, int n_iter, int verbose)
+struct List_int* simple_aco(struct Graph* graph, double alpha, double beta, double initial, double evap_rate, int n_iter, int n_ants, int verbose)
 {
     int j;
     struct List_int* best_sol = create_list_int();
@@ -246,7 +212,7 @@ struct List_int* simple_aco(struct Graph* graph, double alpha, double beta, int 
     for(j = 0; j < n_iter; j++)
     {
         int i;
-        struct S_upd* supd = create_Supd(n_ants);
+        struct List_of_lists* lol = create_list_of_lists();
         double heuristic_info[n_candidates];
         if(verbose)
         {
@@ -258,7 +224,7 @@ struct List_int* simple_aco(struct Graph* graph, double alpha, double beta, int 
             if(verbose)
                 printf("Ant %d:\n", i);
             struct List_int* temp = construct_solution_probabilistically(n_candidates, graph, pheromones, heuristic_info, alpha, beta, verbose);
-            insert_Supd(supd, temp, i);
+            insert_list_of_lists(lol, temp);
             if(verbose)
             {
                 printf("Solution constructed:\n");
@@ -268,6 +234,7 @@ struct List_int* simple_aco(struct Graph* graph, double alpha, double beta, int 
             {
                 if(verbose)
                     printf("Inserting first solution\n");
+                delete_list_int(best_sol);
                 best_sol = copy_list(temp);
             }
             else
@@ -276,6 +243,7 @@ struct List_int* simple_aco(struct Graph* graph, double alpha, double beta, int 
                 {
                     if(verbose)
                         printf("Updating best solution\n");
+                    delete_list_int(best_sol);
                     best_sol = copy_list(temp);
                 }
             }
@@ -286,10 +254,10 @@ struct List_int* simple_aco(struct Graph* graph, double alpha, double beta, int 
             }
         }
         if(verbose)
-            print_Supd(supd);
+            print_list_of_lists(lol);
         evaporate_pheromones(n_candidates, pheromones, evap_rate);
-        deposit_pheromones(n_candidates, supd, pheromones, graph, verbose);
-        delete_Supd(supd);
+        deposit_pheromones(n_candidates, lol, pheromones, graph, n_ants, verbose);
+        delete_list_of_lists(lol);
     }
     return best_sol;
 }

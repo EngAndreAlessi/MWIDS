@@ -14,8 +14,9 @@ int contribution(int v, struct List_int* S, struct Graph* graph, int verbose)
     }
     else
     {
-        struct List_int* temp = list_int_intersection(get_neighborhood(graph, v, 0), S);
-        if(temp->length == 0)
+        struct List_int* neighborhood = get_neighborhood(graph, v, 0);
+        struct List_int* intersec = list_int_intersection(neighborhood, S);
+        if(intersec->length == 0)
         {
             c = get_max_edge_weights(graph);
             if(verbose)
@@ -40,6 +41,8 @@ int contribution(int v, struct List_int* S, struct Graph* graph, int verbose)
                 printf("c(%d|S) = %d\n", v, c);
             return c;
         }
+        delete_list_int(neighborhood);
+        delete_list_int(intersec);
     }
 }
 
@@ -123,7 +126,7 @@ struct List_int* greedy1(struct Graph* graph, int verbose)
             printf("Partial solution: ");
             print_list_int(S);
         }
-        struct List_int* cn = get_closed_neighborhood(g, v_, verbose);
+        struct List_int* cn = get_closed_neighborhood(g, v_, 0);
         if(verbose)
         {
             printf("Closed neighborhood of %d: ", v_);
@@ -159,7 +162,7 @@ struct List_int* greedy2(struct Graph* graph, int verbose)
             printf("Partial solution: ");
             print_list_int(S);
         }
-        struct List_int* cn = get_closed_neighborhood(g, v_, verbose);
+        struct List_int* cn = get_closed_neighborhood(g, v_, 0);
         if(verbose)
         {
             printf("Closed neighborhood of %d: ", v_);
@@ -192,7 +195,7 @@ int objective_function(struct List_int* S, struct Graph* graph, int verbose)
     temp = aux->head;
     while(temp)
     {
-        struct List_int* neighborhood = get_neighborhood(graph, temp->value, verbose);
+        struct List_int* neighborhood = get_neighborhood(graph, temp->value, 0);
         struct List_int* restricted_neighborhood = list_int_intersection(neighborhood, S);
         struct Node_int* temp2 = restricted_neighborhood->head;
         int min_w = get_edge_weight(graph, temp->value, temp2->value);
@@ -209,5 +212,6 @@ int objective_function(struct List_int* S, struct Graph* graph, int verbose)
         delete_list_int(restricted_neighborhood);
         temp = temp->next;
     }
+    delete_list_int(aux);
     return f;
 }

@@ -7,6 +7,7 @@ struct List_int* create_list_int()
     struct List_int* list_int = (struct List_int*)malloc(sizeof(struct List_int));
     list_int->length = 0;
     list_int->head = NULL;
+    list_int->next_list = NULL;
     return list_int;
 }
 
@@ -17,6 +18,15 @@ struct Node_int* create_node_int(int v)
     newNode->value = v;
     newNode->next = NULL;
     return newNode;
+}
+
+// Create empty list of lists
+struct List_of_lists* create_list_of_lists()
+{
+    struct List_of_lists* lol = (struct List_of_lists*)malloc(sizeof(struct List_of_lists));
+    lol->length = 0;
+    lol->head = NULL;
+    return lol;
 }
 
 // Insert list node
@@ -139,6 +149,7 @@ struct List_int* list_int_union(struct List_int* a, struct List_int* b)
         remove_node_int(c, temp->value);
         temp = temp->next;
     }
+    delete_list_int(d);
     return c;
 }
 
@@ -167,5 +178,70 @@ struct List_int* copy_list(struct List_int* list_int)
         temp = temp->next;
     }
     return new_list;
+}
+
+// Insert a list into a list of lists
+void insert_list_of_lists(struct List_of_lists* lol, struct List_int* list_int)
+{
+    if(!lol->head)
+        lol->head = list_int;
+    else
+    {
+        struct List_int* temp = lol->head;
+        while(temp->next_list != NULL)
+            temp = temp->next_list;
+        temp->next_list = list_int;
+    }
+    lol->length++;
+}
+
+// Print a list of lists
+void print_list_of_lists(struct List_of_lists* lol)
+{
+    struct List_int* temp = lol->head;
+    while(temp)
+    {
+        print_list_int(temp);
+        temp = temp->next_list;
+    }
+}
+
+// Remove list i from list of lists
+void remove_list_of_lists(struct List_of_lists* lol, int i)
+{
+    if(i == 0)
+    {
+        struct List_int* temp = lol->head;
+        lol->head = temp->next_list;
+        temp->next_list = NULL;
+        free(temp);
+    }
+    else
+    {
+        int count = 1;
+        struct List_int* temp = lol->head;
+        struct List_int* temp2 = temp->next_list;
+        while(count != i)
+        {
+            temp = temp->next_list;
+            temp2 = temp2->next_list;
+            count++;
+        }
+        temp->next_list = temp2->next_list;
+        temp2->next_list = NULL;
+        free(temp2);
+    }
+    lol->length--;
+}
+
+// Delete a list of lists
+void delete_list_of_lists(struct List_of_lists* lol)
+{
+    struct List_int* temp = lol->head;
+    int j = lol->length;
+    int i;
+    for(i = 0; i < j; i++)
+        remove_list_of_lists(lol, 0);
+    free(lol);
 }
 
