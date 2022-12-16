@@ -214,7 +214,7 @@ void remove_edge(struct Graph* graph, int src, int dst)
 }
 
 // Remove all edges of a node v, assumes graph is not empty and node exists
-void remove_all_edges_of_node(struct Graph* graph, int v, int verbose)
+void remove_all_edges_of_node(struct Graph* graph, int v, int verbose, FILE* fptr)
 {
     struct Node_Graph* temp = graph->head;
     while(temp->v != v)
@@ -223,16 +223,16 @@ void remove_all_edges_of_node(struct Graph* graph, int v, int verbose)
     if(!temp)
     {
         if(verbose)
-            printf("Free node\n");
+            fprintf(fptr, "Free node\n");
     }
     else
     {
-        struct List_int* neighborhood = get_neighborhood(graph, v, 0);
+        struct List_int* neighborhood = get_neighborhood(graph, v, 0, fptr);
         struct Node_int* temp2 = neighborhood->head;
         while(temp2)
         {
             if(verbose)
-                printf("Removing edge (%d,%d)\n", v, temp2->value);
+                fprintf(fptr, "Removing edge (%d,%d)\n", v, temp2->value);
             remove_edge(graph, v, temp2->value);
             temp2 = temp2->next;
         }
@@ -240,14 +240,14 @@ void remove_all_edges_of_node(struct Graph* graph, int v, int verbose)
 }
 
 // Get a list with the neighbors of a vertex v on a graph
-struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose)
+struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose, FILE* fptr)
 {
     struct List_int* neighborhood = create_list_int();
     struct Node_Graph* temp = graph->head;
     if(!temp)
     {
         if(verbose)
-            printf("Graph empty\n");
+            fprintf(fptr, "Graph empty\n");
         return neighborhood;
     }
     else
@@ -257,7 +257,7 @@ struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose)
         if(!temp)
         {
             if(verbose)
-                printf("Node not in graph\n");
+                fprintf(fptr, "Node not in graph\n");
             return neighborhood;
         }
         else
@@ -266,7 +266,7 @@ struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose)
             if(!temp)
             {
                 if(verbose)
-                    printf("Free node\n");
+                    fprintf(fptr, "Free node\n");
                 return neighborhood;
             }
             else
@@ -277,7 +277,7 @@ struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose)
                     temp = temp->neighbor;
                 }
                 if(verbose)
-                    printf("Neighborhood found\n");
+                    fprintf(fptr, "Neighborhood found\n");
                 return neighborhood;
             }
         }
@@ -285,29 +285,29 @@ struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose)
 }
 
 // Get the closed neighborhood of a vertex v on a graph
-struct List_int* get_closed_neighborhood(struct Graph* graph, int v, int verbose)
+struct List_int* get_closed_neighborhood(struct Graph* graph, int v, int verbose, FILE* fptr)
 {
-    struct List_int* neighbors_list = get_neighborhood(graph, v, verbose);
+    struct List_int* neighbors_list = get_neighborhood(graph, v, verbose, fptr);
     insert_list_int(neighbors_list, v);
     return neighbors_list;
 }
 
 // Remove a node from graph
-void remove_node_graph(struct Graph* graph, int v, int verbose)
+void remove_node_graph(struct Graph* graph, int v, int verbose, FILE* fptr)
 {
     struct Node_Graph* temp = graph->head;
     if(!temp)
     {
         if(verbose)
-            printf("Graph empty\n");
+            fprintf(fptr, "Graph empty\n");
     }
     else
     {
         if(has_node(graph, v))
         {
-            remove_all_edges_of_node(graph, v, verbose);
+            remove_all_edges_of_node(graph, v, verbose, fptr);
             if(verbose)
-                printf("Removing node %d\n", v);
+                fprintf(fptr, "Removing node %d\n", v);
             struct Node_Graph* temp = graph->head;
             if(temp->v == v)
             {
@@ -343,18 +343,18 @@ void remove_node_graph(struct Graph* graph, int v, int verbose)
         else
         {
             if(verbose)
-                printf("Node not in graph\n");
+                fprintf(fptr, "Node not in graph\n");
         }
     }
 }
 
 // Delete entire graph
-void delete_graph(struct Graph* graph, int verbose)
+void delete_graph(struct Graph* graph, int verbose, FILE* fptr)
 {
     struct Node_Graph* temp = graph->head;
     while(temp)
     {
-        remove_node_graph(graph, temp->v, verbose);
+        remove_node_graph(graph, temp->v, verbose, fptr);
         temp = graph->head;
     }
     free(graph);
@@ -397,36 +397,36 @@ struct List_int* get_node_list(struct Graph* graph)
 // Get node degree
 int get_node_degree(struct Graph* graph, int v)
 {
-    struct List_int* neighbors_list = get_neighborhood(graph, v, 0);
+    struct List_int* neighbors_list = get_neighborhood(graph, v, 0, NULL);
     int degree = neighbors_list->length;
     delete_list_int(neighbors_list);
     return degree;
 }
 
 // Copy graph
-struct Graph* copy_graph(struct Graph* graph, int verbose)
+struct Graph* copy_graph(struct Graph* graph, int verbose, FILE* fptr)
 {
     struct Graph* new_graph = createGraph();
     struct Node_Graph* temp = graph->head;
     if(verbose)
-        printf("Copying nodes...\n");
+        fprintf(fptr, "Copying nodes...\n");
     while(temp)
     {
         if(verbose)
-            printf("Copying node %d with weight %d\n", temp->v, temp->node_w);
+            fprintf(fptr, "Copying node %d with weight %d\n", temp->v, temp->node_w);
         addNode(new_graph, temp->v, temp->node_w);
         temp = temp->next;
     }
     temp = graph->head;
     if(verbose)
-        printf("Copying edges...\n");
+        fprintf(fptr, "Copying edges...\n");
     while(temp)
     {
         struct Node_Graph* temp2 = temp->neighbor;
         while(temp2)
         {
             if(verbose)
-                printf("Copying edge (%d,%d) with weight %d\n", temp->v, temp2->v, temp2->edge_w);
+                fprintf(fptr, "Copying edge (%d,%d) with weight %d\n", temp->v, temp2->v, temp2->edge_w);
             addArrow(new_graph, temp->v, temp2->v, temp2->edge_w);
             temp2 = temp2->neighbor;
         }

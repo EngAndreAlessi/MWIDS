@@ -94,6 +94,18 @@ void print_list_int(struct List_int* list_int)
     printf("NULL\n");
 }
 
+// Write a list into a file
+void write_list_int(struct List_int* list_int, FILE* fptr)
+{
+    struct Node_int* temp = list_int->head;
+    while(temp)
+    {
+        fprintf(fptr, "%d->", temp->value);
+        temp = temp->next;
+    }
+    fprintf(fptr, "NULL\n");
+}
+
 // Verify if a vertex v is in a list
 int vertex_in_list_int(struct List_int* list_int, int v)
 {
@@ -202,6 +214,17 @@ void print_list_of_lists(struct List_of_lists* lol)
     while(temp)
     {
         print_list_int(temp);
+        temp = temp->next_list;
+    }
+}
+
+// Write a list of lists in a file
+void write_list_of_lists(struct List_of_lists* lol, FILE* fptr)
+{
+    struct List_int* temp = lol->head;
+    while(temp)
+    {
+        write_list_int(temp, fptr);
         temp = temp->next_list;
     }
 }
