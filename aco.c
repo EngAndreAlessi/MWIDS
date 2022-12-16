@@ -112,27 +112,21 @@ void deposit_pheromones(int n_candidates, struct List_of_lists* lol, double pher
 {
     int f[lol->length];
     int i = 0;
-    int min_f = INT_MAX, max_f = INT_MIN;
     struct List_int* temp = lol->head;
     do
     {
         f[i] = objective_function(temp, graph);
-        if(f[i] < min_f)
-            min_f = f[i];
-        if(f[i] > max_f)
-            max_f = f[i];
         i++;
         temp = temp->next_list;
     }while(temp);
     double sum = 0.0;
     for(i=0; i < lol->length; i++)
-        sum += 1/((f[i]-min_f)/(max_f - min_f));
+        sum += f[i];
     if(verbose)
     {
         fprintf(fptr, "Sum: %lf\n", sum);
         fflush(fptr);
     }
-
     int j;
     temp = lol->head;
     do

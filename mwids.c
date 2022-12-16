@@ -242,6 +242,5 @@ int objective_function(struct List_int* S, struct Graph* graph)
         temp = temp->next;
     }
     delete_list_int(aux);
-    printf("%d\n", f);
     return f;
 }
