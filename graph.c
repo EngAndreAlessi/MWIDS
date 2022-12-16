@@ -223,7 +223,11 @@ void remove_all_edges_of_node(struct Graph* graph, int v, int verbose, FILE* fpt
     if(!temp)
     {
         if(verbose)
+        {
             fprintf(fptr, "Free node\n");
+            fflush(fptr);
+        }
+
     }
     else
     {
@@ -232,7 +236,11 @@ void remove_all_edges_of_node(struct Graph* graph, int v, int verbose, FILE* fpt
         while(temp2)
         {
             if(verbose)
+            {
                 fprintf(fptr, "Removing edge (%d,%d)\n", v, temp2->value);
+                fflush(fptr);
+            }
+
             remove_edge(graph, v, temp2->value);
             temp2 = temp2->next;
         }
@@ -247,7 +255,10 @@ struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose, FILE*
     if(!temp)
     {
         if(verbose)
+        {
             fprintf(fptr, "Graph empty\n");
+            fflush(fptr);
+        }
         return neighborhood;
     }
     else
@@ -257,7 +268,10 @@ struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose, FILE*
         if(!temp)
         {
             if(verbose)
+            {
                 fprintf(fptr, "Node not in graph\n");
+                fflush(fptr);
+            }
             return neighborhood;
         }
         else
@@ -266,7 +280,10 @@ struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose, FILE*
             if(!temp)
             {
                 if(verbose)
+                {
                     fprintf(fptr, "Free node\n");
+                    fflush(fptr);
+                }
                 return neighborhood;
             }
             else
@@ -277,7 +294,10 @@ struct List_int* get_neighborhood(struct Graph* graph, int v, int verbose, FILE*
                     temp = temp->neighbor;
                 }
                 if(verbose)
+                {
                     fprintf(fptr, "Neighborhood found\n");
+                    fflush(fptr);
+                }
                 return neighborhood;
             }
         }
@@ -299,7 +319,10 @@ void remove_node_graph(struct Graph* graph, int v, int verbose, FILE* fptr)
     if(!temp)
     {
         if(verbose)
+        {
             fprintf(fptr, "Graph empty\n");
+            fflush(fptr);
+        }
     }
     else
     {
@@ -307,7 +330,10 @@ void remove_node_graph(struct Graph* graph, int v, int verbose, FILE* fptr)
         {
             remove_all_edges_of_node(graph, v, verbose, fptr);
             if(verbose)
+            {
                 fprintf(fptr, "Removing node %d\n", v);
+                fflush(fptr);
+            }
             struct Node_Graph* temp = graph->head;
             if(temp->v == v)
             {
@@ -343,7 +369,11 @@ void remove_node_graph(struct Graph* graph, int v, int verbose, FILE* fptr)
         else
         {
             if(verbose)
+            {
                 fprintf(fptr, "Node not in graph\n");
+                fflush(fptr);
+            }
+
         }
     }
 }
@@ -409,24 +439,38 @@ struct Graph* copy_graph(struct Graph* graph, int verbose, FILE* fptr)
     struct Graph* new_graph = createGraph();
     struct Node_Graph* temp = graph->head;
     if(verbose)
+    {
         fprintf(fptr, "Copying nodes...\n");
+        fflush(fptr);
+    }
     while(temp)
     {
         if(verbose)
+        {
             fprintf(fptr, "Copying node %d with weight %d\n", temp->v, temp->node_w);
+            fflush(fptr);
+        }
         addNode(new_graph, temp->v, temp->node_w);
         temp = temp->next;
     }
     temp = graph->head;
     if(verbose)
+    {
         fprintf(fptr, "Copying edges...\n");
+        fflush(fptr);
+    }
+
     while(temp)
     {
         struct Node_Graph* temp2 = temp->neighbor;
         while(temp2)
         {
             if(verbose)
+            {
                 fprintf(fptr, "Copying edge (%d,%d) with weight %d\n", temp->v, temp2->v, temp2->edge_w);
+                fflush(fptr);
+            }
+
             addArrow(new_graph, temp->v, temp2->v, temp2->edge_w);
             temp2 = temp2->neighbor;
         }

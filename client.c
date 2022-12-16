@@ -13,21 +13,16 @@ int main(void)
     struct Graph* graph = read_rg(path);
     double alpha = 0.5, beta = 0.5;
     int n_ants = 1;
-    double initial = 0.001;
+    double initial = 0.1;
     double evap_rate = 0.3;
     int n_iter = 1;
     struct List_int* S = simple_aco(graph, alpha, beta, initial, evap_rate, n_iter, n_ants, 1, fptr);
     print_list_int(S);
-    printf("%d\n", objective_function(S, graph, 0, NULL));
+    int f = objective_function(S, graph);
+    printf("%d\n", f);
+    printf("Here\n");
     delete_graph(graph, 0, NULL);
     delete_list_int(S);
     fclose(fptr);
-    /*
-    FILE* fptr;
-    fptr = fopen("log.txt", "w");
-    char str[] = "Teste\n";
-    fwrite(str, 1, sizeof(str), fptr);
-    fclose(fptr);
-    */
     return 0;
 }

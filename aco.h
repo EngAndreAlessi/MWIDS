@@ -12,7 +12,7 @@ int roulete_wheel_selection(int n_candidates, double probs[], int verbose, FILE*
 void evaporate_pheromones(int n_candidates, double pheromones[], double evap_rate); // Pheromone evaporation
 void deposit_pheromones(int n_candidates, struct List_of_lists* lol, double pheromones[], struct Graph* graph, int n_ants, int verbose, FILE* fptr); // Deposit pheromones
 void initialize_pheromones(int n_candidates, double pheromones[], double initial); // Initialize pheromones
-void calculate_heuristic_info(int n_candidates, double heuristic_info[], struct Graph* graph, struct List_int* S); // Calculate heuristic information
+void calculate_heuristic_info(int n_candidates, double heuristic_info[], struct Graph* graph, struct List_int* S, struct List_int* removed); // Calculate heuristic information
 struct List_int* construct_solution_probabilistically(int n_candidates, struct Graph* graph, double pheromones[], double heuristic_info[], double alpha, double beta, int verbose, FILE* fptr); // Probabilistically construct a solution
 struct List_int* simple_aco(struct Graph* graph, double alpha, double beta, double initial, double evap_rate, int n_iter, int n_ants, int verbose, FILE* fptr); // Simple framework for Ant Colony Optimization
 

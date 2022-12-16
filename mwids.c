@@ -9,7 +9,10 @@ int contribution(int v, struct List_int* S, struct Graph* graph, int verbose, FI
     {
         c = get_node_weight(graph, v);
         if(verbose)
+        {
             fprintf(fptr, "c(%d|S) = %d\n", v, c);
+            fflush(fptr);
+        }
         return c;
     }
     else
@@ -20,7 +23,10 @@ int contribution(int v, struct List_int* S, struct Graph* graph, int verbose, FI
         {
             c = get_max_edge_weights(graph);
             if(verbose)
+            {
                 fprintf(fptr, "c(%d|S) = %d\n", v, c);
+                fflush(fptr);
+            }
             return c;
         }
         else
@@ -38,7 +44,10 @@ int contribution(int v, struct List_int* S, struct Graph* graph, int verbose, FI
                 temp2 = temp2->next;
             }
             if(verbose)
+            {
                 fprintf(fptr, "c(%d|S) = %d\n", v, c);
+                fflush(fptr);
+            }
             return c;
         }
         delete_list_int(neighborhood);
@@ -57,7 +66,10 @@ int auxiliary_objective_function(struct List_int* S, struct Graph* graph, int ve
         temp = temp->next;
     }
     if(verbose)
+    {
         fprintf(fptr, "faux(S u {s}) = %d\n", sum);
+        fflush(fptr);
+    }
     return sum;
 }
 
@@ -119,24 +131,33 @@ struct List_int* greedy1(struct Graph* graph, int verbose, FILE* fptr)
     {
         int v_ = argmax(g, verbose, fptr);
         if(verbose)
+        {
             fprintf(fptr, "Chosen vertex: %d\n", v_);
+            fflush(fptr);
+        }
+
         insert_list_int(S, v_);
         if(verbose)
         {
             fprintf(fptr, "Partial solution: ");
+            fflush(fptr);
             write_list_int(S, fptr);
         }
         struct List_int* cn = get_closed_neighborhood(g, v_, 0, NULL);
         if(verbose)
         {
             fprintf(fptr, "Closed neighborhood of %d: ", v_);
+            fflush(fptr);
             write_list_int(cn, fptr);
         }
         struct Node_int* temp = cn->head;
         while(temp)
         {
             if(verbose)
+            {
                 fprintf(fptr, "Removing %d\n", temp->value);
+                fflush(fptr);
+            }
             remove_node_graph(g, temp->value, verbose, fptr);
             temp = temp->next;
         }
@@ -155,24 +176,32 @@ struct List_int* greedy2(struct Graph* graph, int verbose, FILE* fptr)
     {
         int v_ = argmin(S, g, verbose, fptr);
         if(verbose)
+        {
             fprintf(fptr, "Chosen vertex: %d\n", v_);
+            fflush(fptr);
+        }
         insert_list_int(S, v_);
         if(verbose)
         {
             fprintf(fptr, "Partial solution: ");
+            fflush(fptr);
             write_list_int(S, fptr);
         }
         struct List_int* cn = get_closed_neighborhood(g, v_, 0, NULL);
         if(verbose)
         {
             fprintf(fptr, "Closed neighborhood of %d: ", v_);
+            fflush(fptr);
             write_list_int(cn, fptr);
         }
         struct Node_int* temp = cn->head;
         while(temp)
         {
             if(verbose)
+            {
                 fprintf(fptr, "Removing %d\n", temp->value);
+                fflush(fptr);
+            }
             remove_node_graph(g, temp->value, verbose, fptr);
             temp = temp->next;
         }
@@ -182,7 +211,7 @@ struct List_int* greedy2(struct Graph* graph, int verbose, FILE* fptr)
 }
 
 // Calculate the objective function for a solution
-int objective_function(struct List_int* S, struct Graph* graph, int verbose, FILE* fptr)
+int objective_function(struct List_int* S, struct Graph* graph)
 {
     int f = 0;
     struct Node_int* temp = S->head;
@@ -213,5 +242,6 @@ int objective_function(struct List_int* S, struct Graph* graph, int verbose, FIL
         temp = temp->next;
     }
     delete_list_int(aux);
+    printf("%d\n", f);
     return f;
 }

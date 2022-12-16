@@ -10,7 +10,7 @@ int argmin(struct List_int* S, struct Graph* graph, int verbose, FILE* fptr); //
 int argmax(struct Graph* graph, int verbose, FILE* fptr); // Helper for the argmax part of the algorithm
 struct List_int* greedy1(struct Graph* graph, int verbose, FILE* fptr); // Greedy Heuristic 1
 struct List_int* greedy2(struct Graph* graph, int verbose, FILE* fptr); // Greedy Heuristic 2
-int objective_function(struct List_int* S, struct Graph* graph, int verbose, FILE* fptr); // Calculate the objective function for a solution
+int objective_function(struct List_int* S, struct Graph* graph); // Calculate the objective function for a solution
 
 
 #endif // MWIDS_H

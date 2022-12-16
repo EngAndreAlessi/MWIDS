@@ -101,9 +101,11 @@ void write_list_int(struct List_int* list_int, FILE* fptr)
     while(temp)
     {
         fprintf(fptr, "%d->", temp->value);
+        fflush(fptr);
         temp = temp->next;
     }
     fprintf(fptr, "NULL\n");
+    fflush(fptr);
 }
 
 // Verify if a vertex v is in a list
