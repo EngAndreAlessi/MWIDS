@@ -38,9 +38,8 @@ void insert_list_int(struct List_int* list_int, int v)
     else
     {
         struct Node_int* temp = list_int->head;
-        while(temp->next != NULL)
-            temp = temp->next;
-        temp->next = newNode;
+        list_int->head = newNode;
+        newNode->next = temp;
     }
     list_int->length++;
 }

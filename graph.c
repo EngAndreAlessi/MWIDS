@@ -46,36 +46,9 @@ void addNode(struct Graph* graph, int v, int node_w)
 void addEdge(struct Graph* graph, int src, int dst, int edge_w)
 {
     // Add edge from src to dst
-    struct Node_Graph* temp = graph->head;
-    struct Node_Graph* temp2 = temp;
-    while(temp->v != src)
-        temp = temp->next;
-    struct Node_Graph* newNode = createNode(dst, temp->node_w);
-    newNode->edge_w = edge_w;
-    if(temp->neighbor == NULL)
-        temp->neighbor = newNode;
-    else
-    {
-        temp2 = temp;
-        while(temp2->neighbor != NULL)
-            temp2 = temp2->neighbor;
-        temp2->neighbor = newNode;
-    }
+    addArrow(graph, src, dst, edge_w);
     // Add edge from dst to src
-    temp = graph->head;
-    while(temp->v != dst)
-        temp = temp->next;
-    newNode = createNode(src, temp->node_w);
-    newNode->edge_w = edge_w;
-    if(temp->neighbor == NULL)
-        temp->neighbor = newNode;
-    else
-    {
-        temp2 = temp;
-        while(temp2->neighbor != NULL)
-            temp2 = temp2->neighbor;
-        temp2->neighbor = newNode;
-    }
+    addArrow(graph, dst, src, edge_w);
     graph->m++;
 }
 
